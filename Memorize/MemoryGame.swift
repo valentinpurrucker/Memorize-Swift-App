@@ -11,6 +11,12 @@ import Foundation
 struct MemoryGame<CardContent: Equatable> {
 	private(set) var cards: [Card]
 	
+	// keep track of cards already shown to the user
+	private var previouslySeenCards: [Card] = []
+	
+	var score = 0
+	
+	
 	private var indexOfFacedUpCard: Int?
 	
 	
@@ -22,6 +28,7 @@ struct MemoryGame<CardContent: Equatable> {
 			cards.append(Card(content: content, id: cardIndex * 2))
 			cards.append(Card(content: content, id: cardIndex * 2 + 1))
 		}
+		cards.shuffle()
 	}
 	
 	
@@ -36,6 +43,12 @@ struct MemoryGame<CardContent: Equatable> {
 					// these two cards have the same content -> match it
 					cards[index].isMatched = true
 					cards[faceUpCard].isMatched = true
+					score += 2
+				} else if let _ =  previouslySeenCards.first(where: { $0.content == cards[faceUpCard].content &&
+					$0.id != cards[faceUpCard].id }) {
+					// if we didnt match but we've already seen the card before
+					// check: is there a card in previously seen cards that has the same content but different id
+					score -= 1
 				}
 				indexOfFacedUpCard = nil
 			} else {
@@ -45,7 +58,9 @@ struct MemoryGame<CardContent: Equatable> {
 				indexOfFacedUpCard = index
 			}
 			cards[index].isFaceUp.toggle()
-			print("Chosen card: \(card)")
+			if !previouslySeenCards.contains(where: { $0.id == card.id }) {
+				previouslySeenCards.append(card)
+			}
 		}
 	}
 	
@@ -57,4 +72,23 @@ struct MemoryGame<CardContent: Equatable> {
 		
 		var id: Int
 	}
+	
+	
+	struct Theme {
+		let name: String
+		let contents: [CardContent]
+		
+		let numberOfPairsOfCards: Int
+		
+		let color: Color
+		
+		init(name: String, contents: [CardContent], numberOfPairsOfCards: Int, color: Color) {
+			self.name = name
+			self.contents = contents
+			self.numberOfPairsOfCards = min(contents.count, numberOfPairsOfCards)
+			self.color = color
+		}
+		
+		typealias Color = (r: Double, g: Double, b: Double)
+	}	
 }
