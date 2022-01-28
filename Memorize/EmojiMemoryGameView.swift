@@ -55,28 +55,30 @@ struct EmojiMemoryGameView: View {
 
 struct CardView: View {
 	
-	private let card: MemoryGame<String>.Card
+	private let card: MemoryGameModel<String>.Card
 	
-	init(_ card: MemoryGame<String>.Card) {
+	init(_ card: MemoryGameModel<String>.Card) {
 		self.card = card
 	}
 	
 	var body: some View {
-		ZStack {
-			let shape = RoundedRectangle(cornerRadius: 10)
-			
-			if card.isFaceUp {
-				shape
-					.fill(.white)
-				shape
-					.strokeBorder(lineWidth: 3)
-				Text(card.content)
-					.font(.largeTitle)
-			} else if card.isMatched {
-				shape.opacity(0)
-			} else {
-				shape
-					.fill()
+		GeometryReader { geometry in
+			ZStack {
+				let shape = RoundedRectangle(cornerRadius: 10)
+				
+				if card.isFaceUp {
+					shape
+						.fill(.white)
+					shape
+						.strokeBorder(lineWidth: 3)
+					Text(card.content)
+						.font(.system(size: geometry.size.width))
+				} else if card.isMatched {
+					shape.opacity(0)
+				} else {
+					shape
+						.fill()
+				}
 			}
 		}
 	}

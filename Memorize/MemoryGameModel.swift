@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct MemoryGame<CardContent: Equatable> {
+struct MemoryGameModel<CardContent: Equatable> {
 	private(set) var cards: [Card]
 	
 	// keep track of cards already shown to the user

@@ -10,7 +10,7 @@ import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
 	
-	typealias EmojiMemoryGameModel = MemoryGame<String>
+	typealias EmojiMemoryGameModel = MemoryGameModel<String>
 	typealias Card = EmojiMemoryGameModel.Card
 	
 	
