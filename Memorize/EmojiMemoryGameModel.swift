@@ -10,42 +10,46 @@ import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
 	
-	static let themes = [
-		MemoryGame<String>.Theme(name: "Pets",
+	typealias EmojiMemoryGameModel = MemoryGame<String>
+	typealias Card = EmojiMemoryGameModel.Card
+	
+	
+	private static let themes = [
+		EmojiMemoryGameModel.Theme(name: "Pets",
 								 contents: ["🐶", "🐱", "🐻‍❄️", "🐷", "🐼", "🦄", "🐵", "🦆", "🦉", "🐯"],
 								 numberOfPairsOfCards: 4, color: (1.0, 0.0, 0.0)),
-		MemoryGame<String>.Theme(name: "Vehicles",
+		EmojiMemoryGameModel.Theme(name: "Vehicles",
 								 contents: ["🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚅", "✈️"],
 								 numberOfPairsOfCards: 10, color: (0.0, 0.0, 1.0)),
-		MemoryGame<String>.Theme(name: "Tech", contents: ["⌚️", "📱", "💻", "🖥", "🖨", "🖱", "💾", "📷", "📺", "⏰", "🕰"],
+		EmojiMemoryGameModel.Theme(name: "Tech", contents: ["⌚️", "📱", "💻", "🖥", "🖨", "🖱", "💾", "📷", "📺", "⏰", "🕰"],
 								 numberOfPairsOfCards: 3,
 								 color: (0.639, 0.902, 0.208)),
 		// to test task: 4 -> one theme has less emojies than the specified number of pairs
-		MemoryGame<String>.Theme(name: "Test", contents: ["😀", "😅", "😍"],
+		EmojiMemoryGameModel.Theme(name: "Test", contents: ["😀", "😅", "😍"],
 								 numberOfPairsOfCards: 100,
 								 color: (0.984, 0.573, 0.235))
 	]
 		
-	static func createMemoryGame(theme: MemoryGame<String>.Theme) -> MemoryGame<String> {
+	private static func createMemoryGame(theme: EmojiMemoryGameModel.Theme) -> EmojiMemoryGameModel {
 		let cardContents = theme.contents.shuffled()
-		return MemoryGame<String>(numberOfPairsOfCards: theme.numberOfPairsOfCards) { index in
+		return EmojiMemoryGameModel(numberOfPairsOfCards: theme.numberOfPairsOfCards) { index in
 			cardContents[index]
 		}
 	}
 	
-	static func chooseRandomTheme() -> MemoryGame<String>.Theme {
+	private static func chooseRandomTheme() -> EmojiMemoryGameModel.Theme {
 		themes[Int.random(in: 0..<themes.count)]
 	}
 	
-	@Published private var model: MemoryGame<String>
+	@Published private var model: EmojiMemoryGameModel
 	
-	@Published private var chosenTheme: MemoryGame<String>.Theme
+	@Published private var chosenTheme: EmojiMemoryGameModel.Theme
 	
 	var themeName: String {
 		chosenTheme.name
 	}
 	
-	var themeColor: MemoryGame<String>.Theme.Color {
+	var themeColor: EmojiMemoryGameModel.Theme.Color {
 		chosenTheme.color
 	}
 	
@@ -53,7 +57,7 @@ class EmojiMemoryGame: ObservableObject {
 		model.score
 	}
 	
-	var cards: Array<MemoryGame<String>.Card> {
+	var cards: Array<Card> {
 		return model.cards
 	}
 	
@@ -68,7 +72,7 @@ class EmojiMemoryGame: ObservableObject {
 	
 	// MARK: - Intents
 	
-	func chooseCard(_ card: MemoryGame<String>.Card) {
+	func chooseCard(_ card: Card) {
 		// you could also call: objectWillChange.send() -> Attr. @Published doesnt that automatically now whenever model changes.
 		model.choose(card)
 	}

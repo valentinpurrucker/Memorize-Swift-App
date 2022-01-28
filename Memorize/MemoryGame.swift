@@ -14,15 +14,18 @@ struct MemoryGame<CardContent: Equatable> {
 	// keep track of cards already shown to the user
 	private var previouslySeenCards: [Card] = []
 	
-	var score = 0
+	private(set) var score = 0
 	
 	
-	private var indexOfFacedUpCard: Int?
+	private var indexOfFaceUpCard: Int? {
+		get { cards.indices.filter({ cards[$0].isFaceUp }).oneAndOnly }
+		set { cards.indices.forEach { cards[$0].isFaceUp = ($0 == newValue) } }
+	}
 	
 	
 	init(numberOfPairsOfCards: Int, createCardContent: (Int) -> CardContent) {
 		// make pair -> so two times the amount of pairs is needed in total
-		cards = [Card]()
+		cards = []
 		for cardIndex in 0..<numberOfPairsOfCards {
 			let content = createCardContent(cardIndex)
 			cards.append(Card(content: content, id: cardIndex * 2))
@@ -37,7 +40,7 @@ struct MemoryGame<CardContent: Equatable> {
 			!cards[index].isFaceUp,
 			!cards[index].isMatched {
 				// could be handled with an if but theres not really a practically situation when the model should receive a wrong id
-			if let faceUpCard = indexOfFacedUpCard {
+			if let faceUpCard = indexOfFaceUpCard {
 				// check if previous faceup matches with current
 				if cards[index].content == cards[faceUpCard].content {
 					// these two cards have the same content -> match it
@@ -50,12 +53,8 @@ struct MemoryGame<CardContent: Equatable> {
 					// check: is there a card in previously seen cards that has the same content but different id
 					score -= 1
 				}
-				indexOfFacedUpCard = nil
 			} else {
-				for i in cards.indices {
-					cards[i].isFaceUp = false
-				}
-				indexOfFacedUpCard = index
+				indexOfFaceUpCard = index
 			}
 			cards[index].isFaceUp.toggle()
 			if !previouslySeenCards.contains(where: { $0.id == card.id }) {
@@ -65,12 +64,12 @@ struct MemoryGame<CardContent: Equatable> {
 	}
 	
 	struct Card: Identifiable {
-		var isFaceUp: Bool = false
-		var isMatched: Bool = false
+		var isFaceUp = false
+		var isMatched = false
 		
-		var content: CardContent
+		let content: CardContent
 		
-		var id: Int
+		let id: Int
 	}
 	
 	
@@ -91,4 +90,15 @@ struct MemoryGame<CardContent: Equatable> {
 		
 		typealias Color = (r: Double, g: Double, b: Double)
 	}	
+}
+
+
+extension Array {
+	var oneAndOnly: Element? {
+		if count == 1 {
+			return first
+		} else {
+			return nil
+		}
+	}
 }
