@@ -49,8 +49,8 @@ class EmojiMemoryGame: ObservableObject {
 		chosenTheme.name
 	}
 	
-	var themeColor: EmojiMemoryGameModel.Theme.Color {
-		chosenTheme.color
+	var themeColor: Color {
+		Color(.sRGB, red: chosenTheme.color.r, green: chosenTheme.color.g, blue: chosenTheme.color.b, opacity: 1)
 	}
 	
 	var score: Int {

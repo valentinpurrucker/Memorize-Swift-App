@@ -53,10 +53,10 @@ struct MemoryGameModel<CardContent: Equatable> {
 					// check: is there a card in previously seen cards that has the same content but different id
 					score -= 1
 				}
+				cards[index].isFaceUp = true
 			} else {
 				indexOfFaceUpCard = index
 			}
-			cards[index].isFaceUp.toggle()
 			if !previouslySeenCards.contains(where: { $0.id == card.id }) {
 				previouslySeenCards.append(card)
 			}
